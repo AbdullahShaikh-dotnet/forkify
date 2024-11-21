@@ -20,6 +20,7 @@ const controlRecipe = async function () {
     receipeView.render(model.state.recipe);
   } catch (error) {
     console.error(error);
+    receipeView.renderErrorMessage();
   }
 };
 
