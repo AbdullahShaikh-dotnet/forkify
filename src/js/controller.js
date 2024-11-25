@@ -22,6 +22,8 @@ const controlRecipe = async function () {
     receipeView.renderSpinner();
     await model.loadRecipe(id);
 
+    resultView.update(model.getSearchResultPage());
+
     receipeView.render(model.state.recipe);
   } catch (error) {
     console.error(error);
@@ -53,7 +55,8 @@ const controlPagination = function(goTo){
 
 const controlServings = function(newServings){
   model.updateServings(newServings);
-  receipeView.render(model.state.recipe);
+  // receipeView.render(model.state.recipe);
+  receipeView.update(model.state.recipe);
 }
 
 
