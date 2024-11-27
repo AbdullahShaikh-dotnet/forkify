@@ -8,7 +8,7 @@ import 'regenerator-runtime/runtime';
 
 // https://forkify-api.herokuapp.com/v2
 
-if(module.hot){
+if (module.hot) {
   module.hot.accept();
 }
 
@@ -48,23 +48,30 @@ const controlSearchResult = async function () {
   }
 };
 
-const controlPagination = function(goTo){
+const controlPagination = function (goTo) {
   resultView.render(model.getSearchResultPage(goTo));
   paginationView.render(model.state.search);
-}
+};
 
-const controlServings = function(newServings){
+const controlServings = function (newServings) {
   model.updateServings(newServings);
   // receipeView.render(model.state.recipe);
   receipeView.update(model.state.recipe);
-}
+};
 
+const controlAddbookmark = function () {
+  if (!model.state.recipe.bookmarked) model.addBookmark(model.state.recipe);
+  else if (model.state.recipe.bookmarked)
+    model.removeBookmark(model.state.recipe.id);
+  receipeView.update(model.state.recipe);
+};
 
 const init = function () {
   receipeView.addHandlerRender(controlRecipe);
   receipeView.addHandlerUpdateServings(controlServings);
   searchView.addHandlerSearch(controlSearchResult);
   paginationView.addHandlerClick(controlPagination);
+  receipeView.addHandlerAddBookmark(controlAddbookmark);
 };
 
 init();
