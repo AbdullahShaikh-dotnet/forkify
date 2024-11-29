@@ -11,6 +11,10 @@ class BookMarkView extends View {
       .map(bookmark => previewView.render(bookmark, false))
       .join('');
   }
+
+  addHandlerBookmark(handler){
+    document.addEventListener("DOMContentLoaded", handler());
+  }
 }
 
 export default new BookMarkView();
