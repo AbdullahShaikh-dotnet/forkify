@@ -3,6 +3,7 @@ import receipeView from './views/receipeView.js';
 import searchView from './views/searchView.js';
 import resultView from './views/resultView.js';
 import paginationView from './views/paginationView.js';
+import bookmarkView from './views/bookmarkView.js';
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
@@ -23,6 +24,7 @@ const controlRecipe = async function () {
     await model.loadRecipe(id);
 
     resultView.update(model.getSearchResultPage());
+    bookmarkView.update(model.state.bookmarks);
 
     receipeView.render(model.state.recipe);
   } catch (error) {
@@ -64,6 +66,9 @@ const controlAddbookmark = function () {
   else if (model.state.recipe.bookmarked)
     model.removeBookmark(model.state.recipe.id);
   receipeView.update(model.state.recipe);
+
+  // render BookMark
+  bookmarkView.render(model.state.bookmarks);
 };
 
 const init = function () {

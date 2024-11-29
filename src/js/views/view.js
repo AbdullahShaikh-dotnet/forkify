@@ -1,16 +1,20 @@
 import icons from 'url:../../img/icons.svg';
 export default class view {
   _data;
-  _errorMessage = 'No receipe found for search result please try another one ;)';
+  _errorMessage =
+    'No receipe found for search result please try another one ;)';
   _message = '';
 
-  render(data) {
+  render(data, render = true) {
     if (!data || (Array.isArray(data) && data.length === 0))
       return this.renderErrorMessage();
 
     this._data = data;
-    this._clear();
     const markup = this._generateMarkup();
+
+    if (!render) return markup;
+
+    this._clear();
     this._parentElement.insertAdjacentHTML('afterbegin', markup);
   }
 
@@ -55,27 +59,27 @@ export default class view {
     this._parentElement.insertAdjacentHTML('afterbegin', markup);
   }
 
-  update(data){
+  update(data) {
     this._data = data;
     const newMarkup = this._generateMarkup();
     const newDOM = document.createRange().createContextualFragment(newMarkup);
     const newElement = Array.from(newDOM.querySelectorAll('*'));
     const currentElemet = Array.from(this._parentElement.querySelectorAll('*'));
 
-    newElement.forEach((newEl,index) => {
+    newElement.forEach((newEl, index) => {
       const currentEl = currentElemet[index];
-       if(!newEl.isEqualNode(currentEl) && newEl.firstChild?.nodeValue.trim() !== ''){
+      if (
+        !newEl.isEqualNode(currentEl) &&
+        newEl.firstChild?.nodeValue.trim() !== ''
+      ) {
         currentEl.textContent = newEl.textContent;
-       }
+      }
 
-       if(!newEl.isEqualNode(currentEl)){
-
-          Array.from(newEl.attributes).forEach(att => {
-            currentEl.setAttribute(att.name, att.value);
-          })
-       }
-
-    })
-
+      if (!newEl.isEqualNode(currentEl)) {
+        Array.from(newEl.attributes).forEach(att => {
+          currentEl.setAttribute(att.name, att.value);
+        });
+      }
+    });
   }
 }
