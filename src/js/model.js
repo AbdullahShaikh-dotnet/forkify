@@ -1,5 +1,5 @@
 import { API_ENDPOINT, RESULT_PER_PAGE, API_Key } from './config.js';
-import { getJSON, sendJSON } from './helpers.js';
+import { AJAX } from './helpers.js';
 
 export const state = {
   recipe: {},
@@ -29,7 +29,7 @@ const createReceipeObject = function (data) {
 
 export const loadRecipe = async function (id) {
   try {
-    const data = await getJSON(`${API_ENDPOINT}${id}`);
+    const data = await AJAX(`${API_ENDPOINT}${id}?key=${API_Key}`);
 
     state.recipe = createReceipeObject(data);
 
@@ -44,7 +44,7 @@ export const loadRecipe = async function (id) {
 
 export const loadSearchResult = async function (query) {
   try {
-    const data = await getJSON(`${API_ENDPOINT}?search=${query}`);
+    const data = await AJAX(`${API_ENDPOINT}?search=${query}&key=${API_Key}`);
     state.search.result = data.data.recipes.map(rec => {
       return {
         id: rec.id,
@@ -52,6 +52,7 @@ export const loadSearchResult = async function (query) {
         publisher: rec.publisher,
         sourceURL: rec.source_url,
         image: rec.image_url,
+        ...(rec.key && { key: rec.key }),
       };
       state.search.page = 1;
     });
@@ -125,7 +126,7 @@ export const UploadReceipe = async function (newReceipe) {
       ingredients,
     };
 
-    const data = await sendJSON(`${API_ENDPOINT}?key=${API_Key}`, receipe);
+    const data = await AJAX(`${API_ENDPOINT}?key=${API_Key}`, receipe);
     state.recipe = createReceipeObject(data);
     addBookmark(state.recipe);
   } catch (error) {

@@ -86,11 +86,15 @@ const controlAddReceipe = async function (addReceipeData) {
     receipeView.render(model.state.recipe);
     addReceipeView.renderMessage();
 
+    bookmarkView.render(model.state.bookmarks);
+
+    window.history.pushState(null, '', `#${model.state.recipe.id}`);
+
     setTimeout(function () {
       addReceipeView.toggleWindow();
     }, MODAL_CLOSE_SECOND);
   } catch (error) {
-    console.error('😡', error);
+    console.error('😡💥💥💥', error);
   }
 };
 
