@@ -41,7 +41,10 @@ export const loadRecipe = async function (id) {
     throw err;
   }
 };
-
+/**
+ * abc
+ * @param {*} query 
+ */
 export const loadSearchResult = async function (query) {
   try {
     const data = await AJAX(`${API_ENDPOINT}?search=${query}&key=${API_Key}`);
