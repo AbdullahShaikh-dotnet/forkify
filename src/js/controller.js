@@ -5,6 +5,7 @@ import resultView from './views/resultView.js';
 import paginationView from './views/paginationView.js';
 import bookmarkView from './views/bookmarkView.js';
 import addReceipeView from './views/addReceipeView.js';
+import { MODAL_CLOSE_SECOND } from './config.js';
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
@@ -72,12 +73,25 @@ const controlAddbookmark = function () {
   bookmarkView.render(model.state.bookmarks);
 };
 
-const controlBookmarks = function(){
+const controlBookmarks = function () {
   bookmarkView.render(model.state.bookmarks);
 };
 
-const controlAddReceipe = function(addReceipeData){
-  console.log(addReceipeData);
+const controlAddReceipe = async function (addReceipeData) {
+  try {
+    addReceipeView.renderSpinner();
+
+    await model.UploadReceipe(addReceipeData);
+
+    receipeView.render(model.state.recipe);
+    addReceipeView.renderMessage();
+
+    setTimeout(function () {
+      addReceipeView.toggleWindow();
+    }, MODAL_CLOSE_SECOND);
+  } catch (error) {
+    console.error('😡', error);
+  }
 };
 
 const init = function () {

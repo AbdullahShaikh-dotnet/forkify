@@ -1,5 +1,5 @@
-import { API_ENDPOINT, RESULT_PER_PAGE } from './config.js';
-import { getJSON } from './helpers.js';
+import { API_ENDPOINT, RESULT_PER_PAGE, API_Key } from './config.js';
+import { getJSON, sendJSON } from './helpers.js';
 
 export const state = {
   recipe: {},
@@ -12,21 +12,27 @@ export const state = {
   bookmarks: [],
 };
 
+const createReceipeObject = function (data) {
+  const { recipe } = data.data;
+  return {
+    id: recipe.id,
+    title: recipe.title,
+    publisher: recipe.publisher,
+    sourceURL: recipe.source_url,
+    image: recipe.image_url,
+    servings: recipe.servings,
+    cookingTime: recipe.cooking_time,
+    ingredients: recipe.ingredients,
+    ...(recipe.key && { key: recipe.key }),
+  };
+};
+
 export const loadRecipe = async function (id) {
   try {
     const data = await getJSON(`${API_ENDPOINT}${id}`);
 
-    const { recipe } = data.data;
-    state.recipe = {
-      id: recipe.id,
-      title: recipe.title,
-      publisher: recipe.publisher,
-      sourceURL: recipe.source_url,
-      image: recipe.image_url,
-      servings: recipe.servings,
-      cookingTime: recipe.cooking_time,
-      ingredients: recipe.ingredients,
-    };
+    state.recipe = createReceipeObject(data);
+
     state.recipe.bookmarked = state.bookmarks.some(
       bookmark => bookmark.id === id
     );
@@ -94,3 +100,35 @@ const init = function () {
 };
 
 init();
+
+export const UploadReceipe = async function (newReceipe) {
+  try {
+    const ingredients = Object.entries(newReceipe)
+      .filter(entry => entry[0]?.startsWith('ingredient') && entry[1] !== '')
+      .map(ing => {
+        const IngArray = ing[1]?.replaceAll(' ', '')?.split(',');
+
+        if (IngArray.length != 3)
+          throw new Error('String is not in Correct Format');
+
+        const [quantity, unit, description] = IngArray;
+        return { quantity: quantity ? +quantity : null, unit, description };
+      });
+
+    const receipe = {
+      title: newReceipe.title,
+      source_url: newReceipe.sourceUrl,
+      image_url: newReceipe.image,
+      publisher: newReceipe.publisher,
+      cooking_time: +newReceipe.cookingTime,
+      servings: +newReceipe.servings,
+      ingredients,
+    };
+
+    const data = await sendJSON(`${API_ENDPOINT}?key=${API_Key}`, receipe);
+    state.recipe = createReceipeObject(data);
+    addBookmark(state.recipe);
+  } catch (error) {
+    throw error;
+  }
+};

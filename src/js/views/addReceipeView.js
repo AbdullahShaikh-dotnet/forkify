@@ -7,6 +7,7 @@ class AddReceipeView extends View {
   _overlay = document.querySelector('.overlay');
   _btnOpen = document.querySelector('.nav__btn--add-recipe');
   _btnClose = document.querySelector('.btn--close-modal');
+  _message = 'Recipe Added Sucessfully';
 
   constructor() {
     super();
@@ -35,6 +36,7 @@ class AddReceipeView extends View {
         e.preventDefault();
         const dataArr = [...new FormData(this)];
         const Data = Object.fromEntries(dataArr);
+        console.log(Data);
         handler(Data);
     })
   }
